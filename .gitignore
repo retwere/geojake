@@ -3,12 +3,6 @@
 # dependencies
 /node_modules
 
-# testing
-/test
-
-# build
-/build
-
 # misc
 .DS_Store
 
