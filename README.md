@@ -2,11 +2,15 @@ geojake/
     demo/
         package.json
         build/
+        dev/
         src/
             map.html
             ...
+        test/
+        types/
     main/
         build/
+        dev/
         package.json
         src/
             geohash.ts
@@ -14,4 +18,5 @@ geojake/
             geometry.ts
             geometry.test.ts
         test/
+        types/
     package.json
