@@ -1,0 +1,8 @@
+{
+    "name": "geojake-demo",
+    "main": "main.js",
+    "private": true,
+    "dependencies": {
+        "geojake": "0.1"
+    }
+}
