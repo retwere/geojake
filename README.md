@@ -1,20 +1,17 @@
 geojake/
-    build/
-        package.json
-        ...
-    debug/
-        package.json
-        ...
     demo/
         package.json
-        map.?
-        ???
-    package.json
-    src/
-        geohash.ts
-        geohash.test.ts
-        geometry.ts
-        geometry.test.ts
-    test/
+        build/
+        src/
+            map.html
+            ...
+    main/
+        build/
         package.json
-        ...
+        src/
+            geohash.ts
+            geohash.test.ts
+            geometry.ts
+            geometry.test.ts
+        test/
+    package.json
