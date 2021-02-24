@@ -3,5 +3,5 @@
     "author": "Jake Fowler <retwere@gmail.com>",
     "license": "MIT",
     "private": true,
-    "workspaces": ["build", "test", "demo"]
+    "workspaces": ["build", "debug", "test", "demo"]
 }
