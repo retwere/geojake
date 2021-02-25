@@ -3,20 +3,16 @@
     "compilerOptions": {
         "composite": true,
         "declaration": true,
-        "declarationDir": "./types",
         "declarationMap": true,
         "incremental": true,
         "lib": ["ES6"],
-        "outDir": "./lib",
-        "rootDir": "./src",
         "sourceMap": true
     },
-    "include": [
-        "**/*.ts"
-    ],
     "exclude": [
-        "node_modules",
-        "types",
+        "**/lib",
+        "**/node_modules",
+        "**/test",
+        "**/types",
         "**/*.test.ts",
         "**/*.d.ts",
         "**/*.js"
