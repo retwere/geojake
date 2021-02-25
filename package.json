@@ -1,55 +1,55 @@
 {
-    "name": "geojake-root",
-    "version": "0.0.0",
-    "author": "Jake Fowler <retwere@gmail.com>",
-    "private": true,
-    "license": "MIT",
-    "scripts": {
-        "build": "yarn build:all",
-        "build:all": "yarn build:main && yarn build:demo",
-        "build:demo": "yarn workspace geojake-demo build",
-        "build:main": "yarn workspace geojake build",
-        "clean": "yarn clean:all",
-        "clean:all": "yarn clean:root && yarn clean:main && yarn clean:demo",
-        "clean:demo": "yarn workspace geojake-demo clean",
-        "clean:main": "yarn workspace geojake clean",
-        "clean:root": "rm -f yarn-error.log",
-        "distclean": "yarn distclean:all",
-        "distclean:all": "yarn distclean:root && yarn distclean:main && yarn distclean:demo",
-        "distclean:demo": "yarn workspace geojake-demo distclean",
-        "distclean:main": "yarn workspace geojake distclean",
-        "distclean:root": "rm -rf node_modules",
-        "test": "yarn test:all",
-        "test:all": "yarn test:main && yarn test:demo",
-        "test:demo": "yarn workspace geojake-demo test",
-        "test:main": "yarn workspace geojake test"
-    },
-    "workspaces": [
-        "main",
-        "demo"
-    ],
-    "devDependencies": {
-        "@tsconfig/recommended": "^1.0.1",
-        "@types/jest": "^26.0.20",
-        "@typescript-eslint/eslint-plugin": "^4.15.2",
-        "@typescript-eslint/parser": "^4.15.2",
-        "eslint": "^7.20.0",
-        "eslint-config-prettier": "^8.1.0",
-        "eslint-plugin-jest": "^24.1.5",
-        "husky": "=4",
-        "jest": "^26.6.3",
-        "lint-staged": ">=10",
-        "prettier": "^2.2.1",
-        "ts-jest": "^26.5.2",
-        "typescript": "^4.2.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "*.js": "eslint --cache --fix",
-        "*.{js,css,md}": "prettier --write"
+  "name": "geojake-root",
+  "version": "0.0.0",
+  "author": "Jake Fowler <retwere@gmail.com>",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn build:all",
+    "build:all": "yarn build:main && yarn build:demo",
+    "build:demo": "yarn workspace geojake-demo build",
+    "build:main": "yarn workspace geojake build",
+    "clean": "yarn clean:all",
+    "clean:all": "yarn clean:root && yarn clean:main && yarn clean:demo",
+    "clean:demo": "yarn workspace geojake-demo clean",
+    "clean:main": "yarn workspace geojake clean",
+    "clean:root": "rm -f yarn-error.log",
+    "distclean": "yarn distclean:all",
+    "distclean:all": "yarn distclean:root && yarn distclean:main && yarn distclean:demo",
+    "distclean:demo": "yarn workspace geojake-demo distclean",
+    "distclean:main": "yarn workspace geojake distclean",
+    "distclean:root": "rm -rf node_modules",
+    "test": "yarn test:all",
+    "test:all": "yarn test:main && yarn test:demo",
+    "test:demo": "yarn workspace geojake-demo test",
+    "test:main": "yarn workspace geojake test"
+  },
+  "workspaces": [
+    "main",
+    "demo"
+  ],
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/jest": "^26.0.20",
+    "@typescript-eslint/eslint-plugin": "^4.15.2",
+    "@typescript-eslint/parser": "^4.15.2",
+    "eslint": "^7.20.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-jest": "^24.1.5",
+    "husky": "=4",
+    "jest": "^26.6.3",
+    "lint-staged": ">=10",
+    "prettier": "^2.2.1",
+    "ts-jest": "^26.5.2",
+    "typescript": "^4.2.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
     }
+  },
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
 }
