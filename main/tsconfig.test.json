@@ -1,0 +1,22 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "compilerOptions": {
+        "composite": true,
+        "declaration": false,
+        "incremental": true,
+        "lib": ["ES6"],
+        "outDir": "./test",
+        "rootDir": "./src",
+        "sourceMap": true
+    },
+    "include": [
+        "**/*.test.ts"
+    ],
+    "exclude": [
+        "node_modules",
+        "**/*.js"
+    ],
+    "references": [
+        { "path": "./tsconfig.json" }
+    ]
+}

@@ -6,6 +6,16 @@
     "author": "Jake Fowler <retwere@gmail.com>",
     "license": "MIT",
     "dependencies": {},
-    "scripts": {},
-
+    "scripts": {
+        "build": "tsc -b",
+        "build:test": "tsc -b ./tsconfig.test.json",
+        "test": "yarn build:test && jest"
+    },
+    "devDependencies": {
+        "@tsconfig/recommended": "^1.0.1",
+        "@types/jest": "^26.0.20",
+        "jest": "^26.6.3",
+        "ts-jest": "^26.5.2",
+        "typescript": "^4.2.2"
+    }
 }
