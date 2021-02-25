@@ -2,6 +2,13 @@
     "name": "geojake-demo",
     "version": "0.0.0",
     "main": "main.js",
+    "license": "MIT",
+    "scripts": {
+        "build": "tsc -b",
+        "clean": "rm -rf test types *.tsbuildinfo",
+        "distclean": "yarn clean && rm -rf node_modules",
+        "test": "jest"
+    },
     "dependencies": {
         "geojake": "0.0.0"
     }

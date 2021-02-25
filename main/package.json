@@ -11,7 +11,5 @@
         "clean": "rm -rf lib test types *.tsbuildinfo",
         "distclean": "yarn clean && rm -rf node_modules",
         "test": "jest"
-    },
-    "dependencies": {},
-    "devDependencies": {}
+    }
 }

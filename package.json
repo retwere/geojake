@@ -12,7 +12,7 @@
         "clean:all": "yarn clean:root && yarn clean:main && yarn clean:demo",
         "clean:demo": "yarn workspace geojake-demo clean",
         "clean:main": "yarn workspace geojake clean",
-        "clean:root": "rm yarn-error.log",
+        "clean:root": "rm -f yarn-error.log",
         "distclean": "yarn distclean:all",
         "distclean:all": "yarn distclean:root && yarn distclean:main && yarn distclean:demo",
         "distclean:demo": "yarn workspace geojake-demo distclean",
