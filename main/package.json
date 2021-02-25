@@ -8,7 +8,6 @@
     "dependencies": {},
     "scripts": {
         "build": "tsc -b",
-        "build:test": "tsc -b ./tsconfig.test.json",
         "clean": "rm -rf lib test types *.tsbuildinfo",
         "clean:full": "yarn clean && rm -rf node_modules",
         "test": "jest"
