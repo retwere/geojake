@@ -3,5 +3,28 @@
     "author": "Jake Fowler <retwere@gmail.com>",
     "license": "MIT",
     "private": true,
-    "workspaces": ["main", "demo"]
+    "scripts": [
+        "build": "yarn build:all",
+        "build:all": "yarn build:main && yarn build:demo",
+        "build:demo": "yarn workspace geojake-demo build",
+        "build:main": "yarn workspace geojake build",
+        "clean": "yarn clean:all",
+        "clean:all": "yarn clean:root && yarn clean:main && yarn clean:demo",
+        "clean:demo": "yarn workspace geojake-demo clean",
+        "clean:main": "yarn workspace geojake clean",
+        "clean:root": "rm yarn-error.log",
+        "distclean": "yarn distclean:all",
+        "distclean:all": "yarn distclean:root && yarn distclean:main && yarn distclean:demo",
+        "distclean:demo": "yarn workspace geojake-demo distclean",
+        "distclean:main": "yarn workspace geojake distclean",
+        "distclean:root": "rm -rf node_modules"
+        "test": "yarn test:all",
+        "test:all": "yarn test:main && yarn test:demo",
+        "test:demo": "yarn workspace geojake-demo test",
+        "test:main": "yarn workspace geojake test"
+    ]
+    "workspaces": [
+        "main",
+        "demo"
+    ]
 }

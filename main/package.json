@@ -1,17 +1,18 @@
 {
     "name": "geojake",
-    "version": "0.1.0",
+    "version": "0.0.0",
     "description": "Useful utilities for geohashing.",
     "main": "geohash.js",
     "author": "Jake Fowler <retwere@gmail.com>",
+    "keywords": ["geohash", "geospatial", "geocoding", "location"],
     "license": "MIT",
-    "dependencies": {},
     "scripts": {
         "build": "tsc -b",
         "clean": "rm -rf lib test types *.tsbuildinfo",
-        "clean:full": "yarn clean && rm -rf node_modules",
+        "distclean": "yarn clean && rm -rf node_modules",
         "test": "jest"
     },
+    "dependencies": {},
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",
         "@types/jest": "^26.0.20",
