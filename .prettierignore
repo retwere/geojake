@@ -1,0 +1,12 @@
+# ignore build artifacts
+lib
+test
+types
+
+# ignore node_modules
+node_modules
+
+# ignore generated file types
+*.d.ts
+*.js
+yarn.lock

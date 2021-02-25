@@ -11,6 +11,7 @@ types/
 # misc
 .DS_Store
 *.tsbuildinfo
+.eslintcache
 
 # environment variables
 .env*

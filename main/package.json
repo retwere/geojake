@@ -1,15 +1,15 @@
 {
-    "name": "geojake",
-    "version": "0.0.0",
-    "author": "Jake Fowler <retwere@gmail.com>",
-    "description": "Useful utilities for geohashing.",
-    "main": "geohash.js",
-    "keywords": ["geohash", "geospatial", "geocoding", "location"],
-    "license": "MIT",
-    "scripts": {
-        "build": "tsc -b",
-        "clean": "rm -rf lib test types *.tsbuildinfo",
-        "distclean": "yarn clean && rm -rf node_modules",
-        "test": "jest"
-    }
+  "name": "geojake",
+  "version": "0.0.0",
+  "author": "Jake Fowler <retwere@gmail.com>",
+  "description": "Useful utilities for geohashing.",
+  "main": "geohash.js",
+  "keywords": ["geohash", "geospatial", "geocoding", "location"],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rm -rf lib test types *.tsbuildinfo",
+    "distclean": "yarn clean && rm -rf node_modules",
+    "test": "jest"
+  }
 }
