@@ -9,7 +9,9 @@
     "scripts": {
         "build": "tsc -b",
         "build:test": "tsc -b ./tsconfig.test.json",
-        "test": "yarn build:test && jest"
+        "clean": "rm -rf lib test types *.tsbuildinfo",
+        "clean:full": "yarn clean && rm -rf node_modules",
+        "test": "jest"
     },
     "devDependencies": {
         "@tsconfig/recommended": "^1.0.1",

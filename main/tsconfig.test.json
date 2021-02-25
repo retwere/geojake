@@ -2,7 +2,9 @@
     "extends": "@tsconfig/recommended/tsconfig.json",
     "compilerOptions": {
         "composite": true,
-        "declaration": false,
+        "declaration": true,
+        "declarationDir": "./test/types",
+        "declarationMap": true,
         "incremental": true,
         "lib": ["ES6"],
         "outDir": "./test",
@@ -14,7 +16,9 @@
     ],
     "exclude": [
         "node_modules",
-        "**/*.js"
+        "types",
+        "**/*.js",
+        "**/*.d.ts"
     ],
     "references": [
         { "path": "./tsconfig.json" }
