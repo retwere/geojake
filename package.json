@@ -3,7 +3,7 @@
     "author": "Jake Fowler <retwere@gmail.com>",
     "license": "MIT",
     "private": true,
-    "scripts": [
+    "scripts": {
         "build": "yarn build:all",
         "build:all": "yarn build:main && yarn build:demo",
         "build:demo": "yarn workspace geojake-demo build",
@@ -17,14 +17,21 @@
         "distclean:all": "yarn distclean:root && yarn distclean:main && yarn distclean:demo",
         "distclean:demo": "yarn workspace geojake-demo distclean",
         "distclean:main": "yarn workspace geojake distclean",
-        "distclean:root": "rm -rf node_modules"
+        "distclean:root": "rm -rf node_modules",
         "test": "yarn test:all",
         "test:all": "yarn test:main && yarn test:demo",
         "test:demo": "yarn workspace geojake-demo test",
         "test:main": "yarn workspace geojake test"
-    ]
+    },
     "workspaces": [
         "main",
         "demo"
-    ]
+    ],
+    "devDependencies": {
+        "@tsconfig/recommended": "^1.0.1",
+        "@types/jest": "^26.0.20",
+        "jest": "^26.6.3",
+        "ts-jest": "^26.5.2",
+        "typescript": "^4.2.2"
+    }
 }
