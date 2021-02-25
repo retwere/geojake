@@ -1,8 +1,9 @@
 {
     "name": "geojake-root",
+    "version": "0.0.0",
     "author": "Jake Fowler <retwere@gmail.com>",
-    "license": "MIT",
     "private": true,
+    "license": "MIT",
     "scripts": {
         "build": "yarn build:all",
         "build:all": "yarn build:main && yarn build:demo",

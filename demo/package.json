@@ -1,6 +1,8 @@
 {
     "name": "geojake-demo",
     "version": "0.0.0",
+    "author": "Jake Fowler <retwere@gmail.com>",
+    "description": "A demo of geojake geohashes!",
     "main": "main.js",
     "license": "MIT",
     "scripts": {

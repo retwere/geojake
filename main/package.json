@@ -1,9 +1,9 @@
 {
     "name": "geojake",
     "version": "0.0.0",
+    "author": "Jake Fowler <retwere@gmail.com>",
     "description": "Useful utilities for geohashing.",
     "main": "geohash.js",
-    "author": "Jake Fowler <retwere@gmail.com>",
     "keywords": ["geohash", "geospatial", "geocoding", "location"],
     "license": "MIT",
     "scripts": {
