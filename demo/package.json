@@ -9,6 +9,7 @@
     "build": "tsc -b",
     "clean": "rm -rf test types *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
+    "lint": "yarn eslint src/*.ts",
     "test": "yarn jest"
   },
   "dependencies": {
