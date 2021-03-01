@@ -1,50 +1,133 @@
-export function angNormalize(x: number) {
-  // Place angle in [-180, 180].
+/**
+ * Normalizes the given angle to [-180, 180].
+ *
+ * @param x - An angle
+ * @returns The value of `x` normalized to [180, -180]
+ */
+export function angNormalize(x: number): number {
   x = x % 360;
   return x < -180 ? x + 360 : x > 180 ? x - 360 : x;
 }
 
-export function angDisplacement(x: number, y: number) {
-  // Calculate the displacement from x to y in the CCW (eastward) direction.
-  // Result is an angle in [0, 360].
+/**
+ * Calculates the angular displacement from x to y in the CCW (eastward)
+ * direction. The result is an angle in [0, 360].
+ *
+ * @param x - The starting angle
+ * @param y - The ending angle
+ * @returns The angular displacement from x to y
+ */
+export function angDisplacement(x: number, y: number): number {
   x = angNormalize(x);
   y = angNormalize(y);
   if (x > y) y += 360;
   return y - x;
 }
 
-export function angBetween(val: number, ang1: number, ang2: number) {
-  // is val between ang1 and ang2
+/**
+ * Determines whether an angle is between two others. That is, whether the angle
+ * is in the region swept out from the start angle to the end angle in the CCW
+ * (eastward) direction.
+ *
+ * @param val - The angle to test
+ * @param ang1 - The starting angle
+ * @param ang2 - The ending angle
+ * @returns True iff `val` is between `ang1` and `ang2`
+ */
+export function angBetween(val: number, ang1: number, ang2: number): boolean {
   return angDisplacement(ang1, val) <= angDisplacement(ang1, ang2);
 }
 
-export function angMid(ang1: number, ang2: number) {
+/**
+ * Calculates the mid-angle of two angles. That is, the mid-angle of the region
+ * swept out from the start angle to the end angle in the CCW (eastward)
+ * direction.
+ *
+ * @param ang1 - The starting angle
+ * @param ang2 - The ending angle
+ * @returns The mid-angle between `ang1` and `ang2`
+ */
+export function angMid(ang1: number, ang2: number): number {
   return angNormalize(ang1 + angDisplacement(ang1, ang2) / 2);
 }
 
-export function normalizeLat(lat: number) {
+/**
+ * Normalizes a latitude to be in [-90, 90]. Values outside of the range are
+ * snapped to -90 or 90.
+ *
+ * @param lat - A latitude
+ * @returns The normalized latitude `lat`
+ */
+export function normalizeLat(lat: number): number {
   return lat > 90 ? 90 : lat < -90 ? -90 : lat;
 }
 
-export function normalizeLng(lng: number) {
+/**
+ * Normalizes a longitude to be in [-180, 180]. Values outside of the range are
+ * normalized as angles.
+ *
+ * @param lng - A longitude
+ * @returns The normalized longitude `lng`
+ */
+export function normalizeLng(lng: number): number {
   return angNormalize(lng);
 }
 
+/**
+ * Represents a subset of the points on the earth.
+ */
 export interface Geometry {
-  intersectsBox: (box: Box) => boolean;
-  containsBox: (box: Box) => boolean;
+  /**
+   * Determines whether this geometry intersects with a given box.
+   *
+   * @param box - The box to test
+   * @returns True iff this geometry intersects `box`
+   */
+  readonly intersectsBox: (box: Box) => boolean;
+
+  /**
+   * Determines whether this geometry completely contains a given box.
+   *
+   * @param box - The box to test
+   * @returns True iff this geometry contains `box`
+   */
+  readonly containsBox: (box: Box) => boolean;
 }
 
+/**
+ * Represents a singleton point on the surface of the earth.
+ * @extends Geometry
+ */
 export class Point implements Geometry {
-  lat: number;
-  lng: number;
+  /**
+   * The latitude of this point.
+   */
+  readonly lat: number;
+
+  /**
+   * The longitude of this point
+   */
+  readonly lng: number;
+
+  /**
+   * Creates a point with the provided coordinates.
+   *
+   * @param coords - The `[lat, lng]` coordinates of the new point
+   */
   constructor(coords: [number, number]) {
     const [lat, lng] = coords;
     this.lat = normalizeLat(lat);
     this.lng = normalizeLng(lng);
   }
 
-  intersectsBox(box: Box) {
+  /**
+   * Determines whether this point intersects with a given box. A point
+   * intersects a box iff the box contains the point.
+   *
+   * @param box - The box to test
+   * @returns True iff this point intersects `box`
+   */
+  intersectsBox(box: Box): boolean {
     return (
       (angBetween(this.lat, box.south, box.north) &&
         angBetween(this.lng, box.west, box.east)) ||
@@ -53,16 +136,49 @@ export class Point implements Geometry {
     );
   }
 
-  containsBox(box: Box) {
+  /**
+   * Determines whether this point completely contains a given box. A point can
+   * never contain a box, so this function always returns false.
+   *
+   * @param box - The box to test
+   * @returns True iff this point contains `box`
+   */
+  containsBox(box: Box): boolean {
     return false;
   }
 }
 
+/**
+ * Represents a latitude/longitude range on the surface of the earth. That is,
+ * the area swept out from south to north, and from west to east. Note that if
+ * `west > east`, then the box is considered to cross the anti-meridian.
+ */
 export class Box implements Geometry {
-  south: number;
-  west: number;
-  north: number;
-  east: number;
+  /**
+   * The south latitude of the box.
+   */
+  readonly south: number;
+
+  /**
+   * The west longitude of the box.
+   */
+  readonly west: number;
+
+  /**
+   * The north latitude of the box.
+   */
+  readonly north: number;
+
+  /**
+   * The east longitude of the box.
+   */
+  readonly east: number;
+
+  /**
+   * Constructs a box with the provided bounds.
+   *
+   * @param bounds - The `[south, west, north, east]` bounds of the box
+   */
   constructor(bounds: [number, number, number, number]) {
     const [south, west, north, east] = bounds;
     this.south = normalizeLat(south);
@@ -71,7 +187,13 @@ export class Box implements Geometry {
     this.east = normalizeLng(east);
   }
 
-  intersectsBox(box: Box) {
+  /**
+   * Determines whether this box intersects the given box.
+   *
+   * @param box - The box to test
+   * @returns True iff this box intersects `box`
+   */
+  intersectsBox(box: Box): boolean {
     return (
       ((angBetween(this.south, box.south, box.north) ||
         angBetween(box.south, this.south, this.north) ||
@@ -86,7 +208,13 @@ export class Box implements Geometry {
     );
   }
 
-  containsBox(box: Box) {
+  /**
+   * Determines whether this box contains the given box.
+   *
+   * @param box - The box to test
+   * @returns True iff this box contains `box`
+   */
+  containsBox(box: Box): boolean {
     return (
       angBetween(box.south, this.south, this.north) &&
       angBetween(box.north, this.south, this.north) &&
@@ -95,7 +223,13 @@ export class Box implements Geometry {
     );
   }
 
-  within(geometry: Geometry) {
+  /**
+   * Determines whether this box is contained within the given geometry.
+   *
+   * @param geometry - The geometry to test
+   * @returns True iff this box is within `geometry`
+   */
+  within(geometry: Geometry): boolean {
     return geometry.containsBox(this);
   }
 }

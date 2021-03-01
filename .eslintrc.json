@@ -1,12 +1,13 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "jest"],
+  "plugins": ["@typescript-eslint", "jest", "eslint-plugin-tsdoc"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
     "plugin:jest/recommended",
     "plugin:jest/style",
     "prettier"
-  ]
+  ],
+  "rules": { "tsdoc/syntax": "warn" }
 }
