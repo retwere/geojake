@@ -96,7 +96,6 @@ export interface Geometry {
 
 /**
  * Represents a singleton point on the surface of the earth.
- * @extends Geometry
  */
 export class Point implements Geometry {
   /**
