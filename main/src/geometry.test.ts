@@ -34,7 +34,12 @@ describe("angBetween", () => {
     expect(g.angBetween(0, -10, 10)).toBe(true);
     expect(g.angBetween(10, -10, 10)).toBe(true);
     expect(g.angBetween(0, 10, -10)).toBe(false);
+    // especially test the case lng == +/-180
     expect(g.angBetween(180, 10, -10)).toBe(true);
+    expect(g.angBetween(-180, 170, 180)).toBe(true);
+    expect(g.angBetween(180, 170, 180)).toBe(true);
+    expect(g.angBetween(-180, -180, -170)).toBe(true);
+    expect(g.angBetween(180, -180, -170)).toBe(true);
   });
 });
 
@@ -42,10 +47,12 @@ describe("angMid", () => {
   it("finds the middle of the range swept out CCW by two angles", () => {
     expect(g.angMid(1, 3)).toBeCloseTo(2);
     expect(g.angMid(-3, -1)).toBeCloseTo(-2);
+    expect(g.angMid(7, 7)).toBeCloseTo(7);
     expect(g.angMid(-10, 10)).toBeCloseTo(0);
     expect(g.angMid(-179, 179)).toBeCloseTo(0);
     expect(g.angMid(10, -10)).toBeCloseTo(180);
     expect(g.angMid(179, -179)).toBeCloseTo(180);
+    expect(g.angMid(180, 180)).toBeCloseTo(180);
     expect(g.angMid(180, -180)).toBeCloseTo(180);
     expect(g.angMid(-180, 180)).toBeCloseTo(0);
   });
@@ -93,7 +100,7 @@ describe("Point", () => {
       ).toBe(false);
     });
 
-    it("correctly identifies when a pole is in a box", () => {
+    it("identifies when a pole is in a box", () => {
       expect(
         new g.Point([90, 0]).intersectsBox(new g.Box([0, 10, 90, 20]))
       ).toBe(true);
@@ -101,11 +108,90 @@ describe("Point", () => {
         new g.Point([-90, 0]).intersectsBox(new g.Box([-90, -20, 0, -10]))
       ).toBe(true);
       expect(
+        new g.Point([90, 0]).intersectsBox(new g.Box([88, -180, 90, 180]))
+      ).toBe(true);
+      expect(
         new g.Point([90, 0]).intersectsBox(new g.Box([-90, -20, 0, -10]))
       ).toBe(false);
       expect(
         new g.Point([-90, 0]).intersectsBox(new g.Box([0, 10, 90, 20]))
       ).toBe(false);
+      // even if the pole is specified with a lng outside the range
+      expect(
+        new g.Point([90, 50]).intersectsBox(new g.Box([0, 10, 90, 20]))
+      ).toBe(true);
+    });
+
+    describe("identifies when a point on the antimeridian is in a box", () => {
+      // especially test that we handle +/-180 correctly
+      it("if the point is on the vertical edge of the box", () => {
+        expect(
+          new g.Point([10, 180]).intersectsBox(new g.Box([5, 170, 15, 180]))
+        ).toBe(true);
+        expect(
+          new g.Point([10, -180]).intersectsBox(new g.Box([5, 170, 15, 180]))
+        ).toBe(true);
+        expect(
+          new g.Point([10, 180]).intersectsBox(new g.Box([5, -180, 15, -170]))
+        ).toBe(true);
+        expect(
+          new g.Point([10, -180]).intersectsBox(new g.Box([5, -180, 15, -170]))
+        ).toBe(true);
+      });
+
+      it("if the point is on the horizontal edge of the box", () => {
+        expect(
+          new g.Point([10, 180]).intersectsBox(new g.Box([10, 170, 20, -170]))
+        ).toBe(true);
+        expect(
+          new g.Point([10, -180]).intersectsBox(new g.Box([0, 170, 10, -179]))
+        ).toBe(true);
+        // This one goes the other way 'round.
+        expect(
+          new g.Point([10, 180]).intersectsBox(new g.Box([10, -170, 15, 170]))
+        ).toBe(false);
+        expect(
+          new g.Point([-10, -180]).intersectsBox(new g.Box([-10, 160, 0, -178]))
+        ).toBe(true);
+      });
+
+      it("if the point is on the corner of the box", () => {
+        expect(
+          new g.Point([60, 180]).intersectsBox(new g.Box([60, -180, 65, -160]))
+        ).toBe(true);
+        expect(
+          new g.Point([60, -180]).intersectsBox(new g.Box([60, -180, 65, -160]))
+        ).toBe(true);
+        expect(
+          new g.Point([0, 180]).intersectsBox(new g.Box([-55, 170, 10, 180]))
+        ).toBe(true);
+        expect(
+          new g.Point([0, -180]).intersectsBox(new g.Box([-55, 170, 10, 180]))
+        ).toBe(true);
+      });
+
+      it("if the point is in the interior of the box", () => {
+        expect(
+          new g.Point([-33.3, -180]).intersectsBox(
+            new g.Box([-40, 170, -30, -179])
+          )
+        ).toBe(true);
+        expect(
+          new g.Point([-33.3, 180]).intersectsBox(
+            new g.Box([-40, 170, -30, -179])
+          )
+        ).toBe(true);
+        expect(
+          new g.Point([-33.3, -180]).intersectsBox(
+            new g.Box([-40, -170, -30, 179])
+          )
+        ).toBe(false);
+        expect(
+          new g.Point([-33.3, 180]).intersectsBox(
+            new g.Box([-40, -170, -30, 179])
+          )
+        ).toBe(false);
+      });
     });
   });
 
@@ -131,6 +217,15 @@ describe("Box", () => {
         new g.Box([-1, -1, 1, 1]).intersectsBox(new g.Box([10, 10, 20, 20]))
       ).toBe(false);
       expect(
+        new g.Box([-1, -1, 1, 1]).intersectsBox(new g.Box([-2, -2, 2, -1.5]))
+      ).toBe(false);
+      expect(
+        new g.Box([-1, -1, 1, 1]).intersectsBox(new g.Box([-2, -2, -1.5, 2]))
+      ).toBe(false);
+    });
+
+    it("determines if two boxes intersect at a pole", () => {
+      expect(
         new g.Box([0, 0, 90, 1]).intersectsBox(new g.Box([0, 10, 90, 11]))
       ).toBe(true);
       expect(
@@ -138,12 +233,29 @@ describe("Box", () => {
           new g.Box([-90, -170, -80, -160])
         )
       ).toBe(true);
-      expect(
-        new g.Box([-1, -1, 1, 1]).intersectsBox(new g.Box([-2, -2, 2, -1.5]))
-      ).toBe(false);
-      expect(
-        new g.Box([-1, -1, 1, 1]).intersectsBox(new g.Box([-2, -2, -1.5, 2]))
-      ).toBe(false);
+    });
+
+    describe("determines if two boxes intersect at the antimeridian", () => {
+      it("if one or both boxes cross the meridian", () => {
+        expect(
+          new g.Box([-10, 170, 10, -170]).intersectsBox(
+            new g.Box([-8, 160, 15, -170])
+          )
+        ).toBe(true);
+        expect(
+          new g.Box([-10, 170, 10, -170]).intersectsBox(
+            new g.Box([-8, 177, -2, 178])
+          )
+        ).toBe(true);
+      });
+
+      it("if both boxes touch the meridian from opposite sides", () => {
+        expect(
+          new g.Box([-10, -180, 10, -170]).intersectsBox(
+            new g.Box([-8, 160, 15, 180])
+          )
+        ).toBe(true);
+      });
     });
   });
 
@@ -156,6 +268,25 @@ describe("Box", () => {
         new g.Box([-2, -2, 2, 2]).containsBox(new g.Box([-1, -1, 17, 1]))
       ).toBe(false);
     });
+
+    it("decides if a box crossing the antimeridian contains a box", () => {
+      expect(
+        new g.Box([-10, 170, 20, -170]).containsBox(
+          new g.Box([-9, 171, 10, -171])
+        )
+      ).toBe(true);
+      expect(
+        new g.Box([-10, 170, 20, -170]).containsBox(
+          new g.Box([-9, 171, 10, 172])
+        )
+      ).toBe(true);
+      // this one goes the long way around
+      expect(
+        new g.Box([-10, -170, 20, 170]).containsBox(
+          new g.Box([-9, 171, 10, 172])
+        )
+      ).toBe(false);
+    });
   });
 
   describe("within", () => {
@@ -164,6 +295,7 @@ describe("Box", () => {
         new g.Box([0, -8, 10, 8]).within(new g.Box([-90, -180, 90, 180]))
       ).toBe(true);
       expect(new g.Box([0, -8, 10, 8]).within(new g.Point([0, 0]))).toBe(false);
+      expect(new g.Box([0, 0, 0, 0]).within(new g.Point([0, 0]))).toBe(false);
     });
   });
 });

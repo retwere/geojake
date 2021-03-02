@@ -27,7 +27,8 @@ export function angDisplacement(x: number, y: number): number {
 /**
  * Determines whether an angle is between two others. That is, whether the angle
  * is in the region swept out from the start angle to the end angle in the CCW
- * (eastward) direction.
+ * (eastward) direction. Both the start and end angles are included in the
+ * range.
  *
  * @param val - The angle to test
  * @param ang1 - The starting angle
@@ -35,6 +36,12 @@ export function angDisplacement(x: number, y: number): number {
  * @returns True iff `val` is between `ang1` and `ang2`
  */
 export function angBetween(val: number, ang1: number, ang2: number): boolean {
+  if (
+    (val === -180 || val === 180) &&
+    (ang1 === 180 || ang1 === -180 || ang2 === 180 || ang2 === -180)
+  ) {
+    return true;
+  }
   return angDisplacement(ang1, val) <= angDisplacement(ang1, ang2);
 }
 
@@ -109,14 +116,20 @@ export class Point implements Geometry {
   readonly lng: number;
 
   /**
-   * Creates a point with the provided coordinates.
+   * Creates a point with the provided coordinates. The coordinates will be
+   * normalized:
+   *   * Latitudes are truncated to [-90, 90].
+   *   * Longitudes are normalized to (-180,180].
+   *   * At the poles (lat==+/-90), the longitude will be 0.
    *
    * @param coords - The `[lat, lng]` coordinates of the new point
    */
   constructor(coords: [number, number]) {
     const [lat, lng] = coords;
     this.lat = normalizeLat(lat);
-    this.lng = normalizeLng(lng);
+    if (this.lat === 90 || this.lat === -90) this.lng = 0;
+    else this.lng = normalizeLng(lng);
+    if (this.lng === -180) this.lng = 180;
   }
 
   /**

@@ -12,7 +12,7 @@ export type bit = 0 | 1;
  * A collection of geohash strings paired with the boxes that represent their
  * bounds.
  */
-export type Geohashes = Record<string, Box>;
+export type GeohashSet = Record<string, Box>;
 
 /**
  * Represents an error that occurred during geohashing.
@@ -258,15 +258,14 @@ export class GeohashNode {
   }
 
   /**
-   * Provides an iterator that iterates through the leaf-level sub-geohashes of
-   * this node. Both the bitstring representation and the corresponding box are
-   * returned.
+   * Provides an iterator that iterates through the leaf-level descendents of
+   * this node.
    *
-   * @returns An iterator that iterates the sub-hashes of this node
+   * @returns An iterator that iterates through all leaf sub-hashes of this node
    */
-  *get(): IterableIterator<[Array<bit>, Box]> {
+  *get(): IterableIterator<GeohashNode> {
     if (this.isLeaf()) {
-      yield [this.bits(), this.box];
+      yield this;
     } else {
       if (this.child[0]) yield* this.child[0].get();
       if (this.child[1]) yield* this.child[1].get();
@@ -277,12 +276,12 @@ export class GeohashNode {
    * Returns geohash strings with corresponding boxes for all leaf-level
    * sub-hashes of this node.
    *
-   * @returns A set of geohash strings with corresponding boxes
+   * @returns A collection of geohash strings with corresponding boxes
    */
-  all(): Geohashes {
-    const output: Geohashes = {};
-    for (const [bits, box] of this.get()) {
-      output[bitsToHash(bits)] = box;
+  all(): GeohashSet {
+    const output: GeohashSet = {};
+    for (const node of this.get()) {
+      output[bitsToHash(node.bits())] = node.box;
     }
     return output;
   }
@@ -290,7 +289,7 @@ export class GeohashNode {
   /**
    * Returns all geohash strings for leaf-level sub-hashes of this node.
    *
-   * @returns A set of geohash strings
+   * @returns An array of geohash strings
    */
   hashes(): Array<string> {
     return Object.keys(this.all());
@@ -299,7 +298,7 @@ export class GeohashNode {
   /**
    * Returns all geohash boxes for leaf-level sub-hashes of this node.
    *
-   * @returns a set of boxes
+   * @returns An array of boxes
    */
   boxes(): Array<Box> {
     return Object.values(this.all());
