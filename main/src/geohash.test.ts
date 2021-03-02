@@ -41,7 +41,7 @@ describe("bitsToHash", () => {
 
 describe("hashToBits", () => {
   it("converts a geohash string to an array of bits", () => {
-    expect(h.hashToBits("s01men")).toBe([
+    expect(h.hashToBits("s01men")).toStrictEqual([
       1,
       1,
       0,
