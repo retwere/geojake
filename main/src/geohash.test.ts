@@ -381,5 +381,258 @@ describe("GeohashNode", () => {
     });
   });
 
-  // TODO: describe("cover", () => {});
+  describe("cover", () => {
+    describe("covers a point with geohashes", () => {
+      it("one geohash for a generic point", () => {
+        const root1 = new h.GeohashNode();
+        const point1 = new g.Point([35.032887, -79.962908]);
+        const actual1 = root1
+          .cover(point1, 5 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected1 = ["dnppk"].sort();
+        expect(actual1).toStrictEqual(expected1);
+        const root2 = new h.GeohashNode();
+        const point2 = new g.Point([37.754309, -122.420382]);
+        const actual2 = root2
+          .cover(point2, 7 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected2 = ["9q8yy2b"].sort();
+        expect(actual2).toStrictEqual(expected2);
+      });
+
+      it("multiple geohashes if the point is on the boundary", () => {
+        const root1 = new h.GeohashNode();
+        const point1 = new g.Point([0, 0]);
+        const actual1 = root1
+          .cover(point1, 6 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected1 = ["7zzzzz", "ebpbpb", "kpbpbp", "s00000"].sort();
+        expect(actual1).toStrictEqual(expected1);
+      });
+
+      it("multiple geohashes if the point is on the antimeridian", () => {
+        const root1 = new h.GeohashNode();
+        const point1 = new g.Point([17.3, 180]);
+        const actual1 = root1
+          .cover(point1, 4 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected1 = ["xgpf", "8504"].sort();
+        expect(actual1).toStrictEqual(expected1);
+      });
+
+      it("many geohashes if the point is a pole", () => {
+        const root1 = new h.GeohashNode();
+        const point1 = new g.Point([90, 0]);
+        const actual1 = root1
+          .cover(point1, 2 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected1 = [
+          "bp",
+          "br",
+          "bx",
+          "bz",
+          "cp",
+          "cr",
+          "cx",
+          "cz",
+          "fp",
+          "fr",
+          "fx",
+          "fz",
+          "gp",
+          "gr",
+          "gx",
+          "gz",
+          "up",
+          "ur",
+          "ux",
+          "uz",
+          "vp",
+          "vr",
+          "vx",
+          "vz",
+          "yp",
+          "yr",
+          "yx",
+          "yz",
+          "zp",
+          "zr",
+          "zx",
+          "zz",
+        ].sort();
+        expect(actual1).toStrictEqual(expected1);
+      });
+    });
+
+    describe("covers a box with geohashes", () => {
+      it("may cover the box with a single geohash", () => {
+        const box = new g.Box([38.50084, -121.72404, 38.69404, -121.14725]);
+        const root = new h.GeohashNode();
+        const actual = root
+          .cover(box, 3 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected = ["9qc"].sort();
+        expect(actual).toStrictEqual(expected);
+      });
+
+      it("can cover the box by several geohashes", () => {
+        const box = new g.Box([37.76346, -122.511207, 37.774865, -122.454044]);
+        const root = new h.GeohashNode();
+        const actual = root
+          .cover(box, 6 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected = [
+          "9q8yu4",
+          "9q8yu5",
+          "9q8yu6",
+          "9q8yu7",
+          "9q8yud",
+          "9q8yue",
+          "9q8yuf",
+          "9q8yug",
+          "9q8yuh",
+          "9q8yuk",
+          "9q8yus",
+          "9q8yuu",
+          "9q8yv4",
+          "9q8yv5",
+          "9q8yv6",
+          "9q8yv7",
+          "9q8yvh",
+          "9q8yvk",
+        ].sort();
+        expect(actual).toStrictEqual(expected);
+      });
+
+      it("may generate shorter hashes if the box is big", () => {
+        const box = new g.Box([36.476381, -123.870108, 39.44667, -120.804922]);
+        const root = new h.GeohashNode();
+        const actual = root
+          .cover(box, 4 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected = [
+          "9nrz",
+          "9nxb",
+          "9nxc",
+          "9nxf",
+          "9nxg",
+          "9nxu",
+          "9nxv",
+          "9nxy",
+          "9nxz",
+          "9nzb",
+          "9nzc",
+          "9nzf",
+          "9nzg",
+          "9nzu",
+          "9nzv",
+          "9nzy",
+          "9nzz",
+          "9ppb",
+          "9q2p",
+          "9q2r",
+          "9q2x",
+          "9q2z",
+          "9q3p",
+          "9q3r",
+          "9q3x",
+          "9q3z",
+          "9q6p",
+          "9q8",
+          "9q9",
+          "9qb",
+          "9qc",
+          "9qd0",
+          "9qd1",
+          "9qd4",
+          "9qd5",
+          "9qdh",
+          "9qdj",
+          "9qdn",
+          "9qdp",
+          "9qf0",
+          "9qf1",
+          "9qf4",
+          "9qf5",
+          "9qfh",
+          "9qfj",
+          "9qfn",
+          "9qfp",
+          "9r00",
+          "9r02",
+          "9r08",
+          "9r0b",
+          "9r10",
+          "9r12",
+          "9r18",
+          "9r1b",
+          "9r40",
+        ].sort();
+        expect(actual).toStrictEqual(expected);
+      });
+
+      it("can cover a box that crosses the antimeridian", () => {
+        const box = new g.Box([41.74172, 170.737608, 46.95318, -165.53192]);
+        const root = new h.GeohashNode();
+        const actual = root
+          .cover(box, 2 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected = ["8p", "8r", "b0", "b2", "xz", "zb"].sort();
+        expect(actual).toStrictEqual(expected);
+      });
+
+      it("can cover a box that contains a pole", () => {
+        const box = new g.Box([85, -180, 90, 180]);
+        const root = new h.GeohashNode();
+        const actual = root
+          .cover(box, 2 * h.GEOHASH_BIT_LENGTH)
+          .hashes()
+          .sort();
+        const expected = [
+          "bp",
+          "br",
+          "bx",
+          "bz",
+          "cp",
+          "cr",
+          "cx",
+          "cz",
+          "fp",
+          "fr",
+          "fx",
+          "fz",
+          "gp",
+          "gr",
+          "gx",
+          "gz",
+          "up",
+          "ur",
+          "ux",
+          "uz",
+          "vp",
+          "vr",
+          "vx",
+          "vz",
+          "yp",
+          "yr",
+          "yx",
+          "yz",
+          "zp",
+          "zr",
+          "zx",
+          "zz",
+        ].sort();
+        expect(actual).toStrictEqual(expected);
+      });
+    });
+  });
 });

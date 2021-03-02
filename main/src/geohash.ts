@@ -1,6 +1,6 @@
 import { angMid, Box, Geometry } from "./geometry";
 
-const GEOHASH_BIT_LENGTH = 5;
+export const GEOHASH_BIT_LENGTH = 5;
 const CHAR_MAP = "0123456789bcdefghjkmnpqrstuvwxyz";
 
 /**
