@@ -3,21 +3,30 @@
   "version": "0.0.0",
   "author": "Jake Fowler <retwere@gmail.com>",
   "description": "A demo of geojake geohashes!",
-  "main": "main.js",
+  "main": "app/index",
   "license": "MIT",
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf test types *.tsbuildinfo",
+    "clean": "rm -rf app/lib coverage types *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
-    "lint": "yarn eslint src/*.ts",
+    "lint": "yarn eslint *.js src/*.ts src/*.tsx",
     "test": "yarn jest"
   },
   "dependencies": {
-    "geojake": "0.0.0"
+    "geojake": "0.0.0",
+    "leaflet": "^1.7.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   },
   "jest": {
     "preset": "ts-jest",
     "testEnvironment": "jsdom",
     "collectCoverage": true
+  },
+  "devDependencies": {
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.2",
+    "webpack": "^5.24.4",
+    "webpack-cli": "^4.5.0"
   }
 }

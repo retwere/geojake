@@ -28,10 +28,7 @@
     "test:demo": "yarn workspace geojake-demo test",
     "test:main": "yarn workspace geojake test"
   },
-  "workspaces": [
-    "main",
-    "demo"
-  ],
+  "workspaces": ["main", "demo"],
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
     "@types/jest": "^26.0.20",
@@ -55,8 +52,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,json}": "eslint --cache --fix",
-    "*.{js,ts,json,html,css,md}": "prettier --write"
+    "*.{js,ts,jsx,tsx,json}": "eslint --cache --fix",
+    "*.{js,ts,jsx,tsx,json,html,css,md}": "prettier --write"
   },
   "jest": {
     "preset": "ts-jest",

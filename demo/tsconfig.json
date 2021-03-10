@@ -1,11 +1,9 @@
 {
-    "extends": "../tsconfig.base.json",
-    "compilerOptions": {
-        "declarationDir": "./types",
-        "outDir": "./lib",
-        "rootDir": "./src"
-    },
-    "include": [
-        "**/*.ts"
-    ]
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "declarationDir": "./types",
+    "outDir": "./app/lib",
+    "rootDir": "./src"
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
 }
