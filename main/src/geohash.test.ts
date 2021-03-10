@@ -7,13 +7,13 @@ describe("bitsToHash", () => {
       h.bitsToHash(
         // prettier-ignore
         [
-          1, 1, 0, 0, 0,
-          0, 0, 0, 0, 0,
-          0, 0, 0, 0, 1,
-          1, 0, 0, 1, 1,
-          0, 1, 1, 0, 1,
-          1, 0, 1, 0, 0,
-        ]
+                    1, 1, 0, 0, 0,
+                    0, 0, 0, 0, 0,
+                    0, 0, 0, 0, 1,
+                    1, 0, 0, 1, 1,
+                    0, 1, 1, 0, 1,
+                    1, 0, 1, 0, 0,
+                ]
       )
     ).toBe("s01men");
   });
@@ -30,13 +30,13 @@ describe("hashToBits", () => {
     expect(h.hashToBits("s01men")).toStrictEqual(
       // prettier-ignore
       [
-        1, 1, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 1,
-        1, 0, 0, 1, 1,
-        0, 1, 1, 0, 1,
-        1, 0, 1, 0, 0,
-      ]
+                1, 1, 0, 0, 0,
+                0, 0, 0, 0, 0,
+                0, 0, 0, 0, 1,
+                1, 0, 0, 1, 1,
+                0, 1, 1, 0, 1,
+                1, 0, 1, 0, 0,
+            ]
     );
   });
 
@@ -310,7 +310,26 @@ describe("GeohashNode", () => {
     });
   });
 
-  describe("get", () => {
+  describe("hash", () => {
+    it("returns the string representation of the geohash", () => {
+      const leaf = new h.GeohashNode()
+        // 01001 = '9'
+        .makeChild(0)
+        .makeChild(1)
+        .makeChild(0)
+        .makeChild(0)
+        .makeChild(1)
+        // 10001 = 'j'
+        .makeChild(1)
+        .makeChild(0)
+        .makeChild(0)
+        .makeChild(0)
+        .makeChild(1);
+      expect(leaf.hash()).toBe("9j");
+    });
+  });
+
+  describe("leaves", () => {
     it("iterates through the leaf geohash nodes", () => {
       const root = new h.GeohashNode();
       const intermediate = root.makeChild(0).makeChild(1);
@@ -318,27 +337,70 @@ describe("GeohashNode", () => {
       const leaf2 = intermediate.makeChild(1);
       const leaf3 = root.makeChild(1);
 
-      const iterator = root.get();
+      const iterator = root.leaves();
       expect(iterator.next().value).toBe(leaf1);
       expect(iterator.next().value).toBe(leaf2);
       expect(iterator.next().value).toBe(leaf3);
+      expect(iterator.next().done).toBe(true);
     });
   });
 
-  describe("all", () => {
-    it("returns all geohash strings with associated boxes", () => {
+  describe("geohashes", () => {
+    it("iterates through all geohash strings with associated boxes", () => {
+      const root = new h.GeohashNode()
+        .fromHash("r0wv")
+        .fromHash("r2") // insert r2 as a leaf
+        .fromHash("r22u") // now r2 is not a leaf
+        .fromHash("r281");
+      const expected = [
+        {
+          hash: "r0wv",
+          box: new g.Box([-41.308594, 144.49219, -41.132813, 144.84375]),
+        },
+        {
+          hash: "r22u",
+          box: new g.Box([-42.890625, 147.30469, -42.714844, 147.65625]),
+        },
+        {
+          hash: "r281",
+          box: new g.Box([-42.011719, 146.25, -41.835938, 146.60156]),
+        },
+      ].sort();
+      const actual = [...root.geohashes()].sort();
+      expect(actual).toHaveLength(expected.length);
+      for (let i = 0; i < expected.length; ++i) {
+        expect(actual[i].hash).toBe(expected[i].hash);
+        // use toBeCloseTo to account for floating point errors
+        expect(actual[i].box.south).toBeCloseTo(expected[i].box.south);
+        expect(actual[i].box.west).toBeCloseTo(expected[i].box.west);
+        expect(actual[i].box.north).toBeCloseTo(expected[i].box.north);
+        expect(actual[i].box.east).toBeCloseTo(expected[i].box.east);
+      }
+    });
+
+    it("iterates through trees with branches of different depths", () => {
       const root = new h.GeohashNode()
         .fromHash("9q8")
         .fromHash("b")
         .fromHash("9q7");
-      const hashes = root.all();
-      expect(hashes["9q8"]).toStrictEqual(
-        new g.Box([36.5625, -123.75, 37.96875, -122.34375])
-      );
-      expect(hashes["9q7"]).toStrictEqual(
-        new g.Box([35.15625, -119.53125, 36.5625, -118.125])
-      );
-      expect(hashes["b"]).toStrictEqual(new g.Box([45, -180, 90, -135]));
+      const sortFn = (x: h.Geohash, y: h.Geohash) => {
+        return x.hash < y.hash ? -1 : 1;
+      };
+      const expected = [
+        { hash: "b", box: new g.Box([45, -180, 90, -135]) },
+        {
+          hash: "9q8",
+          box: new g.Box([36.5625, -123.75, 37.96875, -122.34375]),
+        },
+        {
+          hash: "9q7",
+          box: new g.Box([35.15625, -119.53125, 36.5625, -118.125]),
+        },
+      ].sort(sortFn);
+
+      const actual = [...root.geohashes()].sort(sortFn);
+
+      expect(actual).toStrictEqual(expected);
     });
   });
 
@@ -351,33 +413,9 @@ describe("GeohashNode", () => {
         .fromHash("dqc") // try to insert dqc as a leaf, but it's already there
         .fromHash("d7") // insert d7 as a leaf
         .fromHash("d7c"); // now d7 is no longer a leaf
-      expect(root.hashes().sort()).toStrictEqual(
+      expect([...root.hashes()].sort()).toStrictEqual(
         ["dqcjqc", "dqcjr1", "dqcjpx", "d7c"].sort()
       );
-    });
-  });
-
-  describe("boxes", () => {
-    it("returns the bounds of all leaf geohashes in the tree", () => {
-      const root = new h.GeohashNode()
-        .fromHash("r0wv")
-        .fromHash("r2") // insert r2 as a leaf
-        .fromHash("r22u") // now r2 is not a leaf
-        .fromHash("r281");
-      const expected = [
-        new g.Box([-41.308594, 144.49219, -41.132813, 144.84375]), // r0wv
-        new g.Box([-42.890625, 147.30469, -42.714844, 147.65625]), // r22u
-        new g.Box([-42.011719, 146.25, -41.835938, 146.60156]), //r281
-      ].sort();
-      const actual = root.boxes().sort();
-      expect(actual).toHaveLength(expected.length);
-      for (let i = 0; i < expected.length; ++i) {
-        // use toBeCloseTo to account for floating point errors
-        expect(actual[i].south).toBeCloseTo(actual[i].south);
-        expect(actual[i].west).toBeCloseTo(actual[i].west);
-        expect(actual[i].north).toBeCloseTo(actual[i].north);
-        expect(actual[i].east).toBeCloseTo(actual[i].east);
-      }
     });
   });
 
@@ -386,18 +424,16 @@ describe("GeohashNode", () => {
       it("one geohash for a generic point", () => {
         const root1 = new h.GeohashNode();
         const point1 = new g.Point([35.032887, -79.962908]);
-        const actual1 = root1
-          .cover(point1, 5 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual1 = [
+          ...root1.cover(point1, 5 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected1 = ["dnppk"].sort();
         expect(actual1).toStrictEqual(expected1);
         const root2 = new h.GeohashNode();
         const point2 = new g.Point([37.754309, -122.420382]);
-        const actual2 = root2
-          .cover(point2, 7 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual2 = [
+          ...root2.cover(point2, 7 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected2 = ["9q8yy2b"].sort();
         expect(actual2).toStrictEqual(expected2);
       });
@@ -405,10 +441,9 @@ describe("GeohashNode", () => {
       it("multiple geohashes if the point is on the boundary", () => {
         const root1 = new h.GeohashNode();
         const point1 = new g.Point([0, 0]);
-        const actual1 = root1
-          .cover(point1, 6 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual1 = [
+          ...root1.cover(point1, 6 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected1 = ["7zzzzz", "ebpbpb", "kpbpbp", "s00000"].sort();
         expect(actual1).toStrictEqual(expected1);
       });
@@ -416,10 +451,9 @@ describe("GeohashNode", () => {
       it("multiple geohashes if the point is on the antimeridian", () => {
         const root1 = new h.GeohashNode();
         const point1 = new g.Point([17.3, 180]);
-        const actual1 = root1
-          .cover(point1, 4 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual1 = [
+          ...root1.cover(point1, 4 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected1 = ["xgpf", "8504"].sort();
         expect(actual1).toStrictEqual(expected1);
       });
@@ -427,10 +461,9 @@ describe("GeohashNode", () => {
       it("many geohashes if the point is a pole", () => {
         const root1 = new h.GeohashNode();
         const point1 = new g.Point([90, 0]);
-        const actual1 = root1
-          .cover(point1, 2 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual1 = [
+          ...root1.cover(point1, 2 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected1 = [
           "bp",
           "br",
@@ -473,10 +506,9 @@ describe("GeohashNode", () => {
       it("may cover the box with a single geohash", () => {
         const box = new g.Box([38.50084, -121.72404, 38.69404, -121.14725]);
         const root = new h.GeohashNode();
-        const actual = root
-          .cover(box, 3 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual = [
+          ...root.cover(box, 3 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected = ["9qc"].sort();
         expect(actual).toStrictEqual(expected);
       });
@@ -484,10 +516,9 @@ describe("GeohashNode", () => {
       it("can cover the box by several geohashes", () => {
         const box = new g.Box([37.76346, -122.511207, 37.774865, -122.454044]);
         const root = new h.GeohashNode();
-        const actual = root
-          .cover(box, 6 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual = [
+          ...root.cover(box, 6 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected = [
           "9q8yu4",
           "9q8yu5",
@@ -514,10 +545,9 @@ describe("GeohashNode", () => {
       it("may generate shorter hashes if the box is big", () => {
         const box = new g.Box([36.476381, -123.870108, 39.44667, -120.804922]);
         const root = new h.GeohashNode();
-        const actual = root
-          .cover(box, 4 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual = [
+          ...root.cover(box, 4 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected = [
           "9nrz",
           "9nxb",
@@ -582,10 +612,9 @@ describe("GeohashNode", () => {
       it("can cover a box that crosses the antimeridian", () => {
         const box = new g.Box([41.74172, 170.737608, 46.95318, -165.53192]);
         const root = new h.GeohashNode();
-        const actual = root
-          .cover(box, 2 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual = [
+          ...root.cover(box, 2 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected = ["8p", "8r", "b0", "b2", "xz", "zb"].sort();
         expect(actual).toStrictEqual(expected);
       });
@@ -593,10 +622,9 @@ describe("GeohashNode", () => {
       it("can cover a box that contains a pole", () => {
         const box = new g.Box([85, -180, 90, 180]);
         const root = new h.GeohashNode();
-        const actual = root
-          .cover(box, 2 * h.GEOHASH_BIT_LENGTH)
-          .hashes()
-          .sort();
+        const actual = [
+          ...root.cover(box, 2 * h.GEOHASH_BIT_LENGTH).hashes(),
+        ].sort();
         const expected = [
           "bp",
           "br",

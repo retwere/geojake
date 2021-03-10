@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "author": "Jake Fowler <retwere@gmail.com>",
   "description": "Useful utilities for geohashing.",
-  "main": "geohash.js",
+  "main": "lib/main",
+  "types": "types/main",
   "keywords": [
     "geohash",
     "geospatial",

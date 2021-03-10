@@ -1,7 +1,14 @@
 import { angMid, Box, Geometry } from "./geometry";
 
+/**
+ * The bit length of the binary-to-char hash mapping.
+ */
 export const GEOHASH_BIT_LENGTH = 5;
-const CHAR_MAP = "0123456789bcdefghjkmnpqrstuvwxyz";
+
+/**
+ * This array of characters defines the binary-to-char hash mapping.
+ */
+export const CHAR_MAP = "0123456789bcdefghjkmnpqrstuvwxyz";
 
 /**
  * A `bit` can be `0` or `1`.
@@ -9,8 +16,18 @@ const CHAR_MAP = "0123456789bcdefghjkmnpqrstuvwxyz";
 export type bit = 0 | 1;
 
 /**
+ * A single geohash, represented as a string `hash` with associated bounding box
+ * `box`.
+ */
+export type Geohash = { hash: string; box: Box };
+
+/**
  * A collection of geohash strings paired with the boxes that represent their
- * bounds.
+ * bounds:
+ *   {
+ *     "hash": Box([...]),
+ *     ...
+ *   }
  */
 export type GeohashSet = Record<string, Box>;
 
@@ -21,6 +38,21 @@ export class GeohashError extends Error {
   constructor(message: string) {
     super("Geohash Error: " + message);
     this.name = "GeohashError";
+  }
+
+  // Use this function to indicate the code path is (or should be) unreachable.
+  static _internal(message: string): never {
+    throw new InternalGeohashError(message);
+  }
+}
+
+/**
+ * Internal geohash error. If this occurs then it is a bug.
+ */
+class InternalGeohashError extends GeohashError {
+  constructor(message: string) {
+    super("<<INTERNAL>> " + message);
+    this.name = "InternalGeohashError";
   }
 }
 
@@ -86,6 +118,8 @@ export function hashToBits(hash: string): Array<bit> {
  * empty bitstring. The sequence of bits may be obtained by walking the tree
  * from the root to `x` and emitting the index (in the `child` array) of each
  * child node traversed.
+ *
+ * See https://en.wikipedia.org/wiki/Geohash for more information.
  */
 export class GeohashNode {
   /**
@@ -160,7 +194,7 @@ export class GeohashNode {
    */
   subHashBox(bit: bit): Box {
     if (this.evenBit) {
-      // for even bits, split longitude in half
+      // For even bits, split longitude in half.
       const midLng = angMid(this.box.west, this.box.east);
       if (bit === 0) {
         return new Box([this.box.south, this.box.west, this.box.north, midLng]);
@@ -168,7 +202,7 @@ export class GeohashNode {
         return new Box([this.box.south, midLng, this.box.north, this.box.east]);
       }
     } else {
-      // for odd bits, split latitude in half
+      // For odd bits, split latitude in half.
       const midLat = angMid(this.box.south, this.box.north);
       if (bit === 0) {
         return new Box([this.box.south, this.box.west, midLat, this.box.east]);
@@ -199,11 +233,12 @@ export class GeohashNode {
   /**
    * Covers the given geometry with geohash boxes at the given precision. When
    * called on a node other than the root, only sub-hashes of this hash will be
-   * calculated. The `precision` parameter is the length of the resulting
-   * geohash string; the number of bits is `precision * GEOHASH_BIT_LENGTH`.
+   * calculated. The `precision` parameter is the max depth of the tree (i.e.,
+   * max length of the hash bitstring). The length of the char string is
+   * `precision / GEOHASH_BIT_LENGTH`.
    *
    * @param geometry - The geometry to cover
-   * @param precision - The precision of the geohashes
+   * @param precision - The maximum depth of the binary geohash tree.
    * @returns This node, possibly with new children
    */
   cover(geometry: Geometry, precision: number): GeohashNode {
@@ -258,49 +293,74 @@ export class GeohashNode {
   }
 
   /**
+   * Calculates the string representation fo this geohash. Only valid if the
+   * depth of this node is a multiple of `GEOHASH_BIT_LENGTH`.
+   *
+   * @returns The geohash string for this node
+   *
+   * @throws {@link GeohashError}
+   * Thrown if the depth of this node is not divisible by `GEOHASH_BIT_LENGTH`.
+   */
+  hash(): string {
+    return bitsToHash(this.bits());
+  }
+
+  /**
+   * Provides the string representation and bounding box of this node as a
+   * Geohash.
+   *
+   * @returns The Geohash representation for this node
+   *
+   * @throws {@link GeohashError}
+   * Thrown if the depth of this node is not divisible by `GEOHASH_BIT_LENGTH`.
+   */
+  geohash(): Geohash {
+    return { hash: this.hash(), box: this.box };
+  }
+
+  /**
    * Provides an iterator that iterates through the leaf-level descendents of
    * this node.
    *
    * @returns An iterator that iterates through all leaf sub-hashes of this node
    */
-  *get(): IterableIterator<GeohashNode> {
+  *leaves(): IterableIterator<GeohashNode> {
     if (this.isLeaf()) {
       yield this;
     } else {
-      if (this.child[0]) yield* this.child[0].get();
-      if (this.child[1]) yield* this.child[1].get();
+      if (this.child[0]) yield* this.child[0].leaves();
+      if (this.child[1]) yield* this.child[1].leaves();
     }
   }
 
   /**
-   * Returns geohash strings with corresponding boxes for all leaf-level
-   * sub-hashes of this node.
+   * Provides an iterator for geohash strings + corresponding boxes, for all
+   * leaf-level sub-hashes of this node.
    *
-   * @returns A collection of geohash strings with corresponding boxes
+   * @returns An iterator over geohash strings with corresponding boxes
+   *
+   * @throws {@link GeohashError}
+   * Thrown if any leaf descendent of this node has depth not divisible by
+   * `GEOHASH_BIT_LENGTH`.
    */
-  all(): GeohashSet {
-    const output: GeohashSet = {};
-    for (const node of this.get()) {
-      output[bitsToHash(node.bits())] = node.box;
+  *geohashes(): IterableIterator<Geohash> {
+    for (const leaf of this.leaves()) {
+      yield leaf.geohash();
     }
-    return output;
   }
 
   /**
-   * Returns all geohash strings for leaf-level sub-hashes of this node.
+   * Returns all leaf geohash strings from this tree as an array.
    *
    * @returns An array of geohash strings
-   */
-  hashes(): Array<string> {
-    return Object.keys(this.all());
-  }
-
-  /**
-   * Returns all geohash boxes for leaf-level sub-hashes of this node.
    *
-   * @returns An array of boxes
+   * @throws {@link GeohashError}
+   * Thrown if any leaf descendent of this node has depth not divisible by
+   * `GEOHASH_BIT_LENGTH`.
    */
-  boxes(): Array<Box> {
-    return Object.values(this.all());
+  *hashes(): IterableIterator<string> {
+    for (const leaf of this.leaves()) {
+      yield leaf.hash();
+    }
   }
 }
