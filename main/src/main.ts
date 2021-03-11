@@ -42,7 +42,7 @@ export class Geohashes {
   /**
    * Iterates through the collection of geohashes, providing both the string
    * hash and the bounding box:
-   *   { hash: "9q9j", box: Box([...]) }
+   *   \{ hash: "9q9j", box: Box([...]) \}
    *
    * @returns An iterator over geohash strings with corresponding boxes.
    */
@@ -53,11 +53,11 @@ export class Geohashes {
   /**
    * Provides the set of geohashes as an object, with the hash strings as keys
    * and the corresponding bounding boxes as values:
-   *   {
+   *   \{
    *     "9q9j": Box([...]),
    *     "9q9k": Box([...]),
    *     ...
-   *   }
+   *   \}
    *
    * @returns A set of geohashes with hash strings and boxes.
    */

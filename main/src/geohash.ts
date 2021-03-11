@@ -24,10 +24,10 @@ export type Geohash = { hash: string; box: Box };
 /**
  * A collection of geohash strings paired with the boxes that represent their
  * bounds:
- *   {
+ *   \{
  *     "hash": Box([...]),
  *     ...
- *   }
+ *   \}
  */
 export type GeohashSet = Record<string, Box>;
 

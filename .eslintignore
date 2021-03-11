@@ -1,8 +1,10 @@
-# don't ever lint node_modules
-node_modules
-
 # don't lint build output
-lib
-test
-types
+app/
+coverage/
+docs/
+lib/
+types/
+
+# don't lint node_modules
+node_modules/
 

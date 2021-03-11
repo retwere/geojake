@@ -1,15 +1,12 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 node_modules/
 
-# compiler output
-lib/
-test/
-types/
-
-# test output
+# build output
+app/
 coverage/
+docs/
+lib/
+types/
 
 # misc
 .DS_Store

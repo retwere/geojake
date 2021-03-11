@@ -1,10 +1,11 @@
 {
   "root": true,
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "jest", "eslint-plugin-tsdoc"],
+  "plugins": ["@typescript-eslint", "jest", "json", "tsdoc"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
+    "plugin:json/recommended",
     "plugin:jest/recommended",
     "plugin:jest/style",
     "prettier"

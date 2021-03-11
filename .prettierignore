@@ -1,12 +1,15 @@
 # ignore build artifacts
-lib
-test
-types
+app/
+coverage/
+docs/
+lib/
+types/
 
 # ignore node_modules
-node_modules
+node_modules/
 
 # ignore generated file types
 *.d.ts
-*.js
+*.log
+*.tsbuildinfo
 yarn.lock

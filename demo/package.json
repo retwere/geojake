@@ -8,9 +8,9 @@
   "scripts": {
     "build": "webpack --mode production",
     "build:dev": "webpack --mode development",
-    "clean": "rm -rf app/lib coverage types *.tsbuildinfo",
+    "clean": "rm -rf app coverage types *.log *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
-    "lint": "yarn eslint *.js src/*.ts src/*.tsx",
+    "lint": "yarn eslint *.json src/*.ts src/*.tsx",
     "start": "yarn start:dev",
     "start:dev": "webpack serve --mode development --env development",
     "test": "yarn jest"

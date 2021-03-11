@@ -155,6 +155,7 @@ export class Point implements Geometry {
    * @param box - The box to test
    * @returns True iff this point contains `box`
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   containsBox(box: Box): boolean {
     return false;
   }

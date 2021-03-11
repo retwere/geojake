@@ -14,9 +14,10 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc -b",
-    "clean": "rm -rf lib test types *.tsbuildinfo",
+    "clean": "rm -rf coverage docs lib types *.log *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
-    "lint": "yarn eslint src/*.ts",
+    "docs": "typedoc --plugin typedoc-plugin-markdown src/main.ts",
+    "lint": "yarn eslint *.json src/*.ts",
     "test": "yarn jest"
   },
   "jest": {
