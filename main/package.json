@@ -16,7 +16,9 @@
     "build": "tsc -b",
     "clean": "rm -rf coverage docs lib types *.log *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
-    "docs": "typedoc --plugin typedoc-plugin-markdown src/main.ts",
+    "docs": "yarn docs:html; yarn docs:md",
+    "docs:html": "typedoc --plugin none src/main.ts --theme minimal --out docs/html",
+    "docs:md": "typedoc --plugin typedoc-plugin-markdown src/main.ts --out docs/md",
     "lint": "yarn eslint *.json src/*.ts",
     "test": "yarn jest"
   },
