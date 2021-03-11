@@ -2,7 +2,10 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "declarationDir": "./types",
+    "jsx": "react",
+    "lib": ["ES6", "dom"],
     "outDir": "./app/lib",
+    "removeComments": true,
     "rootDir": "./src"
   },
   "include": ["**/*.ts", "**/*.tsx"]

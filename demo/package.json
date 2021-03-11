@@ -6,13 +6,17 @@
   "main": "app/index",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -b",
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
     "clean": "rm -rf app/lib coverage types *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
     "lint": "yarn eslint *.js src/*.ts src/*.tsx",
+    "start": "yarn build",
+    "start:dev": "webpack serve --mode development --env development",
     "test": "yarn jest"
   },
   "dependencies": {
+    "awesome-typescript-loader": "^5.2.1",
     "geojake": "0.0.0",
     "leaflet": "^1.7.1",
     "react": "^17.0.1",
@@ -27,6 +31,7 @@
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
     "webpack": "^5.24.4",
-    "webpack-cli": "^4.5.0"
+    "webpack-cli": "^4.5.0",
+    "webpack-dev-server": "^3.11.2"
   }
 }

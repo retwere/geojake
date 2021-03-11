@@ -23,6 +23,8 @@
     "lint:all": "yarn lint:main; yarn lint:demo",
     "lint:demo": "yarn workspace geojake-demo lint",
     "lint:main": "yarn workspace geojake lint",
+    "start": "yarn start:demo",
+    "start:demo": "yarn workspace geojake-demo start",
     "test": "yarn test:all",
     "test:all": "yarn test:main; yarn test:demo",
     "test:demo": "yarn workspace geojake-demo test",
