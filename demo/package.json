@@ -11,7 +11,7 @@
     "clean": "rm -rf app/lib coverage types *.tsbuildinfo",
     "distclean": "yarn clean && rm -rf node_modules",
     "lint": "yarn eslint *.js src/*.ts src/*.tsx",
-    "start": "yarn build",
+    "start": "yarn start:dev",
     "start:dev": "webpack serve --mode development --env development",
     "test": "yarn jest"
   },
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.2",
+    "html-webpack-plugin": "^5.3.1",
     "webpack": "^5.24.4",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2"
