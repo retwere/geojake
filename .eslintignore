@@ -8,3 +8,5 @@ types/
 # don't lint node_modules
 node_modules/
 
+# webpack config uses require and other such stuff
+webpack.config.js

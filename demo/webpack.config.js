@@ -4,25 +4,36 @@ const path = require("path");
 module.exports = {
   entry: "./src/index.tsx",
   output: {
-    path: path.resolve(__dirname, "app/lib"),
-    publicPath: "/lib/",
-    filename: "bundle.js"
+    path: path.resolve(__dirname, "app"),
+    publicPath: "/",
+    filename: "app.js",
   },
   module: {
-    rules: [{
-      test: /\.tsx?$/,
-      loader: "awesome-typescript-loader"
-    }]
+    rules: [
+      {
+        test: /\.tsx?$/,
+        loader: "awesome-typescript-loader",
+      },
+      {
+        enforce: "pre",
+        test: /\.js$/,
+        loader: "source-map-loader",
+      },
+    ],
+  },
+  devtool: "source-map",
+  resolve: {
+    extensions: [".js", ".ts", ".tsx"],
   },
   plugins: [
     new HtmlWebpackPlugin({
-      filename: "app/index.html",
-      template: "src/index.ejs"
-    })
+      filename: "index.html",
+      template: "src/index.ejs",
+    }),
   ],
   devServer: {
-    index: "app/index.html",
-    publicPath: "/lib/",
+    index: "index.html",
+    publicPath: "/",
     contentBase: path.resolve(__dirname, "app"),
   },
 };

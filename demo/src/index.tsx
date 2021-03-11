@@ -1,4 +1,7 @@
-import * as ReactDOM from 'react-dom';
-import * as React from 'react';
+import * as ReactDOM from "react-dom";
+import * as React from "react";
+import { App } from "./components/App";
 
-ReactDOM.render(React.createElement("h2", null, "Hello, world!"), document.body);
+const ROOT = document.querySelector(".container");
+
+ReactDOM.render(<App name="Jake" />, ROOT);
