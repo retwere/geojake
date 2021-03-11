@@ -1,6 +1,7 @@
 import * as ReactDOM from "react-dom";
 import * as React from "react";
 import { App } from "./components/App";
+import "./styles/style.scss";
 
 const ROOT = document.querySelector(".container");
 
