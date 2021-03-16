@@ -1,5 +1,5 @@
 # Geojake
-or calculating geohashes of boxes and points.
+For calculating geohashes of boxes and points.
 
 ## Demo
 ```
