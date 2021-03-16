@@ -15,7 +15,6 @@
     "**/test",
     "**/types",
     "**/*.test.ts",
-    "**/*.d.ts",
     "**/*.js"
   ],
   "display": "GeoJakeBase"
