@@ -1,6 +1,8 @@
-Geojake - for calculating geohashes of boxes and points.
+# Geojake
+or calculating geohashes of boxes and points.
 
-For demo: ```
+## Demo
+```
 yarn start
 ```
 
