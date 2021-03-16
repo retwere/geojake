@@ -1,22 +1,6 @@
-geojake/
-    demo/
-        package.json
-        build/
-        dev/
-        src/
-            map.html
-            ...
-        test/
-        types/
-    main/
-        build/
-        dev/
-        package.json
-        src/
-            geohash.ts
-            geohash.test.ts
-            geometry.ts
-            geometry.test.ts
-        test/
-        types/
-    package.json
+Geojake - for calculating geohashes of boxes and points.
+
+For demo: ```
+yarn start
+```
+
